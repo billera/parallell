@@ -3,6 +3,7 @@
 #SBATCH -N 1                     # Number of nodes
 #SBATCH --ntasks=8
 #SBATCH --ntasks-per-node=8      # MPI tasks per node
+#SBATCH --hint=nomultithread
 #SBATCH --cpus-per-task=1
 #SBATCH -t 00:20:00              # Time limit (hh:mm:ss)
 
