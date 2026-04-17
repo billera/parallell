@@ -10,7 +10,7 @@
 # Load MPI module
 module load OpenMPI/5.0.8-GCC-14.3.0
 
-mpirun -n 8 ./pi
-mpirun -n 4 ./pi
-mpirun -n 2 ./pi
-mpirun -n 1 ./pi
+for n in 16 8 4 2; do 
+    echo "$n" 
+    mpirun -n $n ./ pi 
+done
