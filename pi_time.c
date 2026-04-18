@@ -42,12 +42,12 @@ int main(int argc, char *argv[]) {
     }
 
     printf("PI is approx. %.16f\n",  globsum);
-    t_end = MPI_Wtime(); 
+    t_end = MPI_Wtime();
+    printf("Elapsed time : %1.4f\n", t_end-t_begin);
   } else { /* Send my partial sum to the processor with its
 	      rank equal to zero */
     MPI_Send(&sum, 1, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);
   }
   MPI_Finalize(); /* Shut down and clean up MPI */
-  printf("Elapsed time : %1.2f\n", t_end-t_begin); 
   return 0;
 }
