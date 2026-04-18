@@ -8,6 +8,7 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[]) {
+  double t_begin, t_end;
   int rank, size;
   const long int intervals = 100000000L ; /* The sum is [globally]
 					     divided into this many
@@ -15,9 +16,8 @@ int main(int argc, char *argv[]) {
   int chunk;             /* This many iterations will I do */
   int i, istart, istop;  /* Variables for the local loop   */
   double sum, dx;
-
   MPI_Init(&argc, &argv); /* Initialize MPI */
-
+  t_begin = MPI_Wtime(); 
   MPI_Comm_size(MPI_COMM_WORLD, &size); /* Get the number of processors */
   MPI_Comm_rank(MPI_COMM_WORLD, &rank); /* Get my number                */
 
@@ -42,13 +42,12 @@ int main(int argc, char *argv[]) {
     }
 
     printf("PI is approx. %.16f\n",  globsum);
-
+    t_end = MPI_Wtime();
+    printf("Elapsed time : %1.2f\n", t_end-t_begin); 
   } else { /* Send my partial sum to the processor with its
 	      rank equal to zero */
     MPI_Send(&sum, 1, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);
   }
-
   MPI_Finalize(); /* Shut down and clean up MPI */
-
   return 0;
 }
