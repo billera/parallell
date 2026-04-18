@@ -15,9 +15,9 @@ int main(int argc, char *argv[]) {
 					     intervals     */
   int chunk;             /* This many iterations will I do */
   int i, istart, istop;  /* Variables for the local loop   */
-  double sum, dx;
+  double sum, globsum, dx;
   MPI_Init(&argc, &argv); /* Initialize MPI */
-  t_begin = MPI_Wtime(); 
+  t_begin = MPI_Wtime();
   MPI_Comm_size(MPI_COMM_WORLD, &size); /* Get the number of processors */
   MPI_Comm_rank(MPI_COMM_WORLD, &rank); /* Get my number                */
 
@@ -32,21 +32,11 @@ int main(int argc, char *argv[]) {
     sum += dx*4.0/(1.0 + tmp*tmp);
   }
 
+  MPI_Reduce(&sum, &globsum, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD); // one element sent to rank 0
   if (rank == 0) {
-    double globsum = sum;
-
-    for (i = 1; i < size; i++) { /* Collect the partial sums */
-      MPI_Status status;
-      MPI_Recv(&sum, 1, MPI_DOUBLE, i, i, MPI_COMM_WORLD, &status);
-      globsum += sum;
-    }
-
-    printf("PI is approx. %.16f\n",  globsum);
     t_end = MPI_Wtime();
-    printf("Elapsed time : %1.2f\n", t_end-t_begin); 
-  } else { /* Send my partial sum to the processor with its
-	      rank equal to zero */
-    MPI_Send(&sum, 1, MPI_DOUBLE, 0, rank, MPI_COMM_WORLD);
+    printf("PI is approx. %.16f\n", globsum);
+    printf("Elapsed time : %1.4f\n", t_end - t_begin);
   }
   MPI_Finalize(); /* Shut down and clean up MPI */
   return 0;
